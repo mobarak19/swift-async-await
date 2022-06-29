@@ -100,7 +100,7 @@ extension ViewController: UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = self.userlist[indexPath.row].name
+        cell.textLabel?.text = self.userlist[indexPath.row].name + "\u{0001F30D}"
         return cell
     }
     
