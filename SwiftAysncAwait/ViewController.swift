@@ -11,9 +11,21 @@ class ViewController: UIViewController {
 
     private let url = URL(string: "https://jsonplaceholder.typicode.com/users")
 
-    
+    let table : UITableView  = {
+        let table = UITableView()
+        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        return table
+    } ()
+    var userlist :[User] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        table.frame = view.bounds
+        view.addSubview(table)
+        table.delegate = self
+        table.dataSource = self
+        
+        
         
         Task {
             let result = await getUserlist()
@@ -29,9 +41,14 @@ class ViewController: UIViewController {
             print("result3")
 
             switch result {
+                
             case .success(let users):
                 print("success")
                 //print(users)
+                self.userlist = users
+                DispatchQueue.main.async {
+                    self.table.reloadData()
+                }
              
             case .failure(let error):
                 print("failure")
@@ -73,6 +90,22 @@ class ViewController: UIViewController {
             print(error.localizedDescription)
         }
     }
+}
+
+
+extension ViewController: UITableViewDelegate,UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return userlist.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = self.userlist[indexPath.row].name
+        return cell
+    }
+    
+    
+    
 }
 
 struct User:Codable{
